@@ -2,6 +2,12 @@
 
 설치는 **사용자 컴퓨터에서 직접** 실행된다. 에이전트는 OS를 확인하고 명령을 제시하며, 사용자가 실행·확인하도록 안내한다. 각 단계 끝에 버전 확인으로 성공 여부를 검증한다.
 
+> **자동화**: 아래 단계를 일일이 치지 않고 한 번에 하려면 `install/` 스크립트를 쓴다.
+> - macOS/Linux: `bash install/install.sh` (Quarto·R·패키지·Obsidian·Zotero) → 또는 폴더 생성까지 한 번에 `bash install/bootstrap.sh "<프로젝트경로>" --install`
+> - Windows: `./install/install.ps1` (winget)
+> - 검증: `bash install/verify.sh "<01_manuscript경로>"`
+> GUI 앱(Obsidian/Zotero)은 설치만 자동이고, 플러그인 승인·BBT export 지정은 직접 한다(이 문서·`install/zotero_bbt_setup.md`·`install/obsidian_starter/README.md` 참고).
+
 ---
 
 ## 1. Quarto

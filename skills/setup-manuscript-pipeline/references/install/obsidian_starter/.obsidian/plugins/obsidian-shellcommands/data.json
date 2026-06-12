@@ -1,0 +1,29 @@
+{
+  "settings_version": "0.23.0",
+  "shell_commands": [
+    {
+      "id": "render-manuscript",
+      "shell_command": "cd \"{{vault_path}}\" && Rscript _scripts/render_with_insertions.R",
+      "platform_specific_commands": {
+        "default": "cd \"{{vault_path}}\" && Rscript _scripts/render_with_insertions.R",
+        "win32": "cd /d \"{{vault_path}}\" && Rscript _scripts\\render_with_insertions.R"
+      },
+      "alias": "Render manuscript (DOCX + HTML)",
+      "icon": "document",
+      "confirm_execution": false,
+      "ignore_error_codes": [],
+      "output_channel_order": "stdout-first",
+      "output_channels": {
+        "stdout": "notification",
+        "stderr": "notification"
+      },
+      "events": {}
+    }
+  ],
+  "preview_variables_in_command_palette": true,
+  "show_autocomplete_menu": true,
+  "error_message_duration": 20,
+  "notification_message_duration": 10,
+  "working_directory": "",
+  "default_shells": {}
+}

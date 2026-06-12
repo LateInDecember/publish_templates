@@ -9,6 +9,22 @@ description: Sets up a complete Quarto + Obsidian + Zotero + R manuscript-writin
 
 상세 내용은 `references/`에 있다. 시작 전에 다음을 읽는다: `references/setup_questions.md`, `references/folder_structure.md`, `references/AGENTS_TEMPLATE.md`.
 
+### 자동화 스크립트 (가능하면 활용)
+
+`references/install/`에 설치·세팅 자동화가 있다. Phase 0(질문)으로 프로젝트 경로를 받은 뒤, 결정적인 부분(폴더 구조·양식·스크립트·.obsidian·AGENTS·검증)은 **bootstrap.sh 한 번으로** 처리할 수 있다:
+
+```bash
+bash references/install/bootstrap.sh "<프로젝트_절대경로>" [--install]
+#   --install: 먼저 install.sh로 Quarto/R/Obsidian/Zotero 설치 시도
+```
+
+- `install/install.sh`(mac/linux), `install/install.ps1`(windows): Quarto·R(+패키지)·Obsidian·Zotero 설치.
+- `install/bootstrap.sh`: 설치(선택) → Phase 1 폴더 + Phase 4 양식·스크립트 + .obsidian 스타터 + AGENTS.md → verify.
+- `install/verify.sh`: 도구·폴더·references.bib 검증.
+- `install/zotero_bbt_setup.md`, `install/obsidian_starter/`: GUI로 마무리해야 하는 연동(Zotero auto-export, Obsidian 커뮤니티 플러그인) 안내·기본설정.
+
+bootstrap이 끝나도 **GUI 단계(Zotero BBT auto-export 지정, Obsidian 커뮤니티 플러그인 설치 승인)와 프로젝트별 값(AGENTS 플레이스홀더, reporting_root, 마커 매핑)** 은 사람이/에이전트가 마무리해야 한다. 아래 Phase는 이 마무리까지 포함한 전체 절차다.
+
 ## Phase 0 — 사용자에게 질문 (먼저)
 
 `references/setup_questions.md`의 질문을 **한 번에** 던지고 답을 받는다. 핵심 5가지:
