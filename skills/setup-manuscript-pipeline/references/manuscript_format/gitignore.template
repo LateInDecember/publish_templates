@@ -1,0 +1,27 @@
+.quarto/
+*_files/
+.DS_Store
+.Rhistory
+.manuscript_render.qmd
+manuscript_render.qmd
+manuscript_inserted_tmp.docx
+__pycache__/
+**/__pycache__/
+~$*.docx
+
+/.quarto/
+**/*.quarto_ipynb
+
+# --- render byproducts (regenerated) ---
+05_output/*_files/
+05_output/manuscript_render_files/
+
+# --- temp/quarto session caches ---
+quarto-session-temp*/
+**/quarto-session-temp*/
+
+# --- Obsidian per-machine state ---
+.obsidian/workspace*.json
+
+# NOTE: _logs/ is intentionally kept (sync manifests, snapshots).
+# Content in 01_source/ 02_literature/ 03_assets/ 04_synced/ is tracked.

@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.obsidian/workspace*.json
+
+# packaging artifacts
+*.plugin
+/tmp/
+
+# nothing else is ignored — this repo is a template/plugin source

@@ -1,0 +1,25 @@
+project:
+  type: default
+  output-dir: 05_output
+
+format:
+  docx:
+    toc: false
+    number-sections: false
+    reference-doc: 01_source/styles/reference-nanum-myeongjo.docx
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    theme: cosmo
+    css: 01_source/styles/manuscript.css
+    embed-resources: true   # 단일 HTML로 임베드 → 05_output에 그림/스타일 폴더 복사본이 안 생김
+
+bibliography: 01_source/references.bib
+csl: 01_source/apa.csl
+link-citations: true
+lang: en
+
+editor:
+  markdown:
+    wrap: sentence
