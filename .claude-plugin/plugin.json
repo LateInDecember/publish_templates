@@ -1,7 +1,7 @@
 {
   "name": "manuscript-publishing-pipeline",
   "version": "0.1.0",
-  "description": "Quarto + Obsidian + Zotero + R 기반 학술 논문 원고 작성·렌더링 파이프라인을 처음부터 세팅하고, 문헌 PDF를 구조화된 리뷰 노트로 작성한다. 다른 컴퓨터에서도 동일하게 복제 가능.",
+  "description": "에이전트 중립적 학술 논문 출판 파이프라인 템플릿 — Codex, Claude, Cursor 등 AGENTS.md를 읽는 어떤 agentic AI로도 사용 가능. Quarto + Obsidian + Zotero + R 기반 원고 작성·렌더링 환경을 처음부터 세팅하고 문헌 PDF를 구조화된 리뷰 노트로 작성한다. 이 plugin.json은 Claude/Cowork 설치를 위한 선택적 패키징일 뿐, 핵심은 AGENTS.md + 프롬프트.md다.",
   "author": {
     "name": "cloud"
   },
