@@ -37,6 +37,18 @@ cd 01_manuscript
 Rscript _scripts/sync_zotero_literature.R
 ```
 
+## 5.5 Zotero 웹 API 키 (_secrets)
+
+위 BBT auto-export는 로컬 export라 키가 필요 없지만, **Zotero 웹 API**로 메타데이터·첨부를 가져오는 스크립트는 API 키가 필요하다. 키는 `_secrets/`에 안전하게 둔다.
+
+1. 키 발급: <https://www.zotero.org/settings/keys> → *Create new private key* → **read** 권한 권장. key와 userID(숫자) 확인.
+2. 저장(복붙 한 번):
+   ```bash
+   bash _secrets/set_zotero_key.sh            # 키 붙여넣기 → _secrets/zotero.env (권한600, gitignore)
+   ```
+   Windows: `powershell -ExecutionPolicy Bypass -File _secrets\set_zotero_key.ps1`
+3. 스크립트/에이전트는 `_secrets/zotero.env`를 **읽기 전용**으로 로드(`set -a; . _secrets/zotero.env; set +a`)하고 키를 출력·커밋하지 않는다. (`install/secrets/README.md`)
+
 ## 6. 검증
 
 ```bash

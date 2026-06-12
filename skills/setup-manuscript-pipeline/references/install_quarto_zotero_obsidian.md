@@ -52,7 +52,9 @@
 
 ---
 
-## 4. R + 렌더 패키지 (분석이 R인 경우)
+## 4. R + 렌더 패키지 (선택 — `render_with_insertions.R`를 쓸 때만)
+
+> **R은 선택**이다. 분석을 Python/MATLAB로 해도 되고, `02_anal` 폴더는 도구 중립(`01_R` 같은 강제 없음)이다. 다만 마커·표 자동삽입 렌더(`render_with_insertions.R`)는 R이 필요하다. R을 안 쓰면 `quarto render manuscript.md`로 렌더한다(표는 마커 위치에 수동 배치). 자동 설치는 `install.sh --with-r` / `install.ps1 -WithR`.
 
 1. **R** 설치: <https://cloud.r-project.org/> (또는 macOS `brew install --cask r`, Windows `winget install RProject.R`).
 2. 렌더 스크립트 의존 패키지:
@@ -65,6 +67,10 @@
 4. 확인: `Rscript -e 'cat(R.version.string)'` 및 위 패키지 `library()` 로드.
 
 ---
+
+## 5. Zotero API 키 (_secrets) — 선택
+
+웹 API로 메타데이터·첨부를 가져오는 스크립트용. `bash _secrets/set_zotero_key.sh`로 키를 복붙해 `_secrets/zotero.env`(gitignore, 권한600)에 저장. 자세히는 `install/zotero_bbt_setup.md` §5.5, `install/secrets/README.md`.
 
 ## 검증 체크리스트
 

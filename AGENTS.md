@@ -51,6 +51,8 @@ publish_templates/
 - **마커 기반 삽입** `[Table N 삽입]`, `[Figure N 삽입]`.
 - **부산물 격리**: csv·로그는 전부 `_logs/`.
 - 번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물.
+- **도구 중립 / R 선택**: `02_anal`은 도구 이름을 쓰지 않는 중립 구조(`00_code`, `01_data/{00_raw,01_interim,02_final}`, …). R은 선택이며 `render_with_insertions.R`에만 필요(없으면 `quarto render manuscript.md`).
+- **시크릿**: API 키는 `_secrets/zotero.env`(gitignore·권한600)에만. 에이전트는 **읽기 전용**으로 쓰고 키를 출력·로그·커밋하지 않는다.
 
 ## 주의
 

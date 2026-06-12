@@ -14,7 +14,7 @@ script_path <- if (nzchar(root_override)) {
 script_dir <- dirname(script_path)
 manuscript_root <- dirname(script_dir)
 project_root <- dirname(manuscript_root)
-reporting_root <- file.path(project_root, "02_anal", "01_R", "03_results", "06_reporting")
+reporting_root <- file.path(project_root, "02_anal", "03_results", "06_reporting")
 dry_run <- "--dry-run" %in% commandArgs(trailingOnly = TRUE)
 
 message("[sync_reporting_assets] Manuscript root: ", manuscript_root)

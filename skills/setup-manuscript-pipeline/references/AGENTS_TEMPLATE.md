@@ -33,10 +33,11 @@
   04_synced/(tables/, figures/)   ← 분석 미러, 읽기 전용
   05_output/                      ← 렌더 산출물
   _scripts/  _logs/  _archive/
-02_anal/01_R/  00_code/ 01_data/ 02_meta_data/ 03_results/06_reporting/ 04_docs/
+_secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.ps1
+02_anal/  00_code/ 01_data/(00_raw,01_interim,02_final) 02_meta_data/ 03_results/06_reporting/ 04_docs/
 ```
 
-번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물. `06_reporting`이 분석→원고 단일 핸드오프 지점.
+번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물. `06_reporting`이 분석→원고 단일 핸드오프 지점. **`02_anal`은 도구 중립**(폴더에 R/Python 이름을 쓰지 않음). **R은 선택**: `render_with_insertions.R`만 R이 필요하고, R 없이는 `quarto render manuscript.md`로 렌더한다.
 
 ## 2. 출력 위치 규칙 (위반 금지)
 
@@ -54,9 +55,9 @@
 
 표·그림이 바뀌어야 하면 **항상 분석 → 동기화 → 렌더** 순서. 역방향(원고에서 직접 수정) 금지.
 
-1. **분석 수정**: `02_anal/01_R/00_code/`의 스크립트 수정·실행 → `03_results/.../06_reporting` 갱신.
+1. **분석 수정**: `02_anal/00_code/`의 스크립트 수정·실행 → `02_anal/03_results/06_reporting` 갱신.
 2. **동기화**: `01_manuscript/_scripts/sync_reporting_assets.R` → `04_synced/`로 미러(렌더가 자동 호출).
-3. **렌더**: `01_manuscript/`에서 `Rscript _scripts/render_with_insertions.R` (또는 `01_source/render.command` 더블클릭) → `05_output/manuscript.docx`, `.html`. 렌더는 `manuscript.md`를 직접 읽음(별도 `.qmd` 없음).
+3. **렌더**: `01_manuscript/`에서 `Rscript _scripts/render_with_insertions.R` (또는 `01_source/render.command`) → `05_output/manuscript.docx`, `.html`. 렌더는 `manuscript.md`를 직접 읽음(별도 `.qmd` 없음). **R을 쓰지 않으면** `quarto render manuscript.md`(표 자동삽입 없음, 표·그림은 마커 위치에 수동 배치).
 
 ## 4. 그림·표 = 코드가 유일 출처
 
@@ -91,7 +92,13 @@
 
 ## 9. 도구·경로 (이 프로젝트 실제값)
 
-- 분석 결과 단일 출처: `<06_reporting 절대경로>`
+- 분석 결과 단일 출처: `02_anal/03_results/06_reporting` (또는 `<실제 경로>`)
 - Zotero 컬렉션: `<컬렉션 경로>` → `01_source/references.bib` 자동 export
 - 로컬 PDF 소스(있으면): `<경로>`
-- 분석 도구: `<R | Python | MATLAB>`
+- 분석 도구: `<R | Python | MATLAB>` (R은 선택)
+
+## 10. 시크릿 (API 키) — 안전 규칙
+
+- Zotero 등 API 키는 **`_secrets/zotero.env`** 에만 둔다(gitignore, 권한 600). placeholder는 `_secrets/zotero.env.example`, 입력은 `_secrets/set_zotero_key.sh`(복붙).
+- 에이전트는 키를 **읽기 전용으로만** 사용한다: `set -a; . _secrets/zotero.env; set +a` 또는 R `readRenviron("_secrets/zotero.env")`.
+- 키 값을 **채팅·로그·코드·커밋에 절대 출력/포함하지 않는다**(필요시 길이/끝 4자리만). `_secrets/zotero.env`를 git에 추가하지 않는다.

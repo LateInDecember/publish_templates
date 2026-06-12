@@ -25,3 +25,8 @@ quarto-session-temp*/
 
 # NOTE: _logs/ is intentionally kept (sync manifests, snapshots).
 # Content in 01_source/ 02_literature/ 03_assets/ 04_synced/ is tracked.
+
+# secrets (API keys) — never commit
+_secrets/zotero.env
+_secrets/*.env
+!_secrets/*.example

@@ -5,11 +5,11 @@
 ## 전체 흐름
 
 ```
-[분석(R)]  02_anal/01_R/00_code/*.R
+[분석]  02_anal/00_code/*  (R/Python/MATLAB — 도구 중립)
    │  실행
    ▼
-[reporting]  02_anal/01_R/03_results/06_reporting/{docs,figures,tables}/{main,supplementary}
-   │  sync_reporting_assets.R (렌더가 자동 호출)
+[reporting]  02_anal/03_results/06_reporting/{docs,figures,tables}/{main,supplementary}
+   │  sync_reporting_assets.R (렌더가 자동 호출; reporting_root 기본 = 02_anal/03_results/06_reporting)
    ▼
 [미러]  01_manuscript/04_synced/{tables,figures}      ← 읽기 전용
    │  render_with_insertions.R 가 마커를 실제 파일로 치환
@@ -24,10 +24,12 @@
 
 1. **분석 실행** (결과·수치가 바뀐 경우):
    ```bash
-   cd 02_anal/01_R
-   Rscript 00_code/00_setup.R   # 이후 번호 순서대로 필요한 스크립트 실행
-   # 결과가 03_results/.../06_reporting 에 갱신됨
+   cd 02_anal
+   # R 예: Rscript 00_code/00_setup.R … (번호 순서대로)
+   # Python 예: python 00_code/00_setup.py …
+   # 결과가 03_results/06_reporting 에 갱신됨
    ```
+   > 분석 도구는 자유(R/Python/MATLAB). `render_with_insertions.R`(마커·표 삽입)만 R이 필요하다.
 
 2. **동기화 확인(선택)**:
    ```bash

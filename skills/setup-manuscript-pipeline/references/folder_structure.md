@@ -40,23 +40,35 @@
 │   ├── _logs/                         # 모든 csv·manifest·json·스냅샷 (literature/ 하위)
 │   └── _archive/                      # 아카이브 (날짜 폴더 1단계까지만)
 │
-└── 02_anal/                           # 분석 폴더 (도구별)
-    └── 01_R/
-        ├── 00_code/                   # 00_setup.R … NN_*.R (번호 = 실행 순서)
-        ├── 01_data/                   # 01_interim/ → 02_final/
-        ├── 02_meta_data/              # codebook, variable_map, logs
-        ├── 03_results/                # 분석별 raw 결과
-        │   └── 06_reporting/          # ★ 원고로 넘어가는 단일 출처 (docs/figures/tables, main+supplementary)
-        └── 04_docs/
+├── _secrets/                          # API 키 보관 (gitignore, 권한 600) — _secrets/README.md
+│   ├── zotero.env.example             # placeholder (커밋 OK)
+│   ├── zotero.env                     # 실제 키 (절대 커밋 금지)
+│   └── set_zotero_key.sh / .ps1       # 키 복붙 헬퍼
+│
+└── 02_anal/                           # 분석 폴더 — 도구 중립 (R/Python/MATLAB 무엇이든)
+    ├── 00_code/                       # 분석 코드 (번호 = 실행 순서)
+    ├── 01_data/
+    │   ├── 00_raw/                    # 원자료 (불변, 읽기 전용)
+    │   ├── 01_interim/                # 중간 산출물
+    │   └── 02_final/                  # 분석용 최종 데이터셋
+    ├── 02_meta_data/                  # codebook, variable_map, logs
+    ├── 03_results/                    # 분석별 raw 결과
+    │   └── 06_reporting/              # ★ 원고로 넘어가는 단일 출처 (docs/figures/tables, main+supplementary)
+    └── 04_docs/
 ```
+
+> **도구 중립**: `02_anal`은 도구 이름을 폴더에 쓰지 않는다(이전의 `01_R` 같은 강제 없음). 코드는 `00_code/`에 둔다. **R은 선택**이며, 분석을 Python/MATLAB로 해도 된다. 단, `render_with_insertions.R`(마커·표 삽입 렌더)만 R이 필요하다 — R을 안 쓰면 `quarto render manuscript.md`로 렌더한다.
 
 ## 생성 명령 (예시, bash/zsh)
 
 ```bash
 P="<프로젝트 절대경로>"
 mkdir -p "$P/01_manuscript"/{01_source/{styles,notes},02_literature/{pdfs,notes},03_assets/figures,04_synced/{tables/{main,supplementary},figures},05_output,_scripts/lit,_logs/literature,_archive}
-mkdir -p "$P/02_anal/01_R"/{00_code,01_data/{01_interim,02_final},02_meta_data,03_results/06_reporting/{docs/{main,supplementary},figures/{main,supplementary},tables/{main,supplementary}},04_docs}
+mkdir -p "$P/_secrets"
+mkdir -p "$P/02_anal"/{00_code,01_data/{00_raw,01_interim,02_final},02_meta_data,03_results/06_reporting/{docs/{main,supplementary},figures/{main,supplementary},tables/{main,supplementary}},04_docs}
 ```
+
+> 또는 자동: `bash install/bootstrap.sh "$P"` 가 위 구조 + 양식·스크립트·_secrets·.gitignore까지 만든다.
 
 ## 불변 규칙
 

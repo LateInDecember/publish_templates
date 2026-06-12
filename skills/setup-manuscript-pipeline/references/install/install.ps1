@@ -1,8 +1,25 @@
+#requires -Version 5
 <#
-  install.ps1 — Quarto / R(+packages) / Obsidian / Zotero 설치 (Windows, winget)
-  사용법(PowerShell):  ./install.ps1
-  GUI 앱(Obsidian/Zotero)은 설치만 자동, 플러그인 승인·BBT export 지정은 직접 하세요.
+  install.ps1 - Install Quarto / Obsidian / Zotero (R is OPTIONAL) on Windows via winget.
+
+  This file is intentionally ASCII / English only. Windows PowerShell 5.1 reads scripts
+  using the system ANSI code page by default, so non-ASCII (e.g. Korean) string/comment
+  bytes can break parsing. Keeping this script ASCII avoids that entirely.
+
+  Usage (PowerShell):
+    powershell -ExecutionPolicy Bypass -File install.ps1            # no R
+    powershell -ExecutionPolicy Bypass -File install.ps1 -WithR     # also install R + render packages
+
+  Notes:
+    - GUI apps (Obsidian/Zotero) are installed only. Plugin approval and Better BibTeX
+      auto-export must be configured inside the app afterward.
+    - R is OPTIONAL. render_with_insertions.R (marker/table insertion) requires R.
+      Without R, render with plain: quarto render manuscript.md
 #>
+param([switch]$WithR)
+
+$ErrorActionPreference = 'Continue'
+try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 function Have($cmd) { return [bool](Get-Command $cmd -ErrorAction SilentlyContinue) }
 function Step($name, $id) {
@@ -10,31 +27,36 @@ function Step($name, $id) {
   if (Have winget) {
     winget install --id $id -e --accept-source-agreements --accept-package-agreements
   } else {
-    Write-Warning "winget이 없습니다. App Installer를 설치하거나 공식 사이트에서 $name 를 받으세요."
+    Write-Warning "winget not found. Install 'App Installer' from the Microsoft Store, or download $name from its official site."
   }
 }
 
-Write-Host "== Windows 설치 (winget) =="
-
-Step "Quarto"   "Posit.Quarto"
-Step "R"        "RProject.R"
+Write-Host "== Windows install (winget) =="
+Step "Quarto"   "Posit.Quarto"      # if not found, try: RStudio.Quarto
 Step "Obsidian" "Obsidian.Obsidian"
 Step "Zotero"   "Zotero.Zotero"
 
-# R 렌더 패키지
-Write-Host "-- R 렌더 패키지 --"
-$rscript = Get-Command Rscript -ErrorAction SilentlyContinue
-if ($rscript) {
-  & Rscript -e "pkgs <- c('officer','png','stringr','xml2','zip'); miss <- pkgs[!pkgs %in% rownames(installed.packages())]; if(length(miss)) install.packages(miss, repos='https://cloud.r-project.org'); cat('installed:', paste(pkgs, collapse=', '), '\n')"
+if ($WithR) {
+  Step "R" "RProject.R"
+  Write-Host "-- R render packages --"
+  if (Have Rscript) {
+    & Rscript -e "pkgs <- c('officer','png','stringr','xml2','zip'); miss <- pkgs[!pkgs %in% rownames(installed.packages())]; if (length(miss)) install.packages(miss, repos='https://cloud.r-project.org'); cat('R render packages ready\n')"
+  } else {
+    Write-Warning "Rscript not found yet. Open a NEW PowerShell window (so PATH refreshes) and run: install.ps1 -WithR"
+  }
 } else {
-  Write-Warning "Rscript 미발견 — R 설치 후(새 PowerShell 창) 다시 실행하세요."
+  Write-Host "-- R skipped. Use -WithR to install it. (render_with_insertions.R needs R; without R use 'quarto render'.) --"
 }
 
-# 버전 확인
-Write-Host "`n== 버전 확인 =="
-if (Have quarto) { quarto --version } else { Write-Warning "quarto 미발견(새 창에서 재시도)" }
-if (Have R)      { R --version | Select-Object -First 1 } else { Write-Warning "R 미발견" }
+Write-Host ""
+Write-Host "== Versions =="
+if (Have quarto) { quarto --version } else { Write-Warning "quarto not found (open a new window and retry)" }
+if ($WithR -and (Have R)) { (R --version)[0] }
 
-Write-Host "`n== 다음 GUI 단계(직접) =="
-Write-Host "  1) Zotero Better BibTeX 설치 → 컬렉션을 references.bib로 auto-export(Keep updated)."
-Write-Host "  2) Obsidian에서 01_manuscript\ 를 vault로 열기 → Shell commands/Citations/Dataview 설치."
+Write-Host ""
+Write-Host "== Next (manual GUI steps) =="
+Write-Host "  1) Zotero: install Better BibTeX, set auto-export of your collection to"
+Write-Host "     01_manuscript\01_source\references.bib  (enable 'Keep updated')."
+Write-Host "  2) Obsidian: open 01_manuscript\ as a vault, install community plugins"
+Write-Host "     (Shell commands, Citations, Dataview)."
+Write-Host "  See: install_quarto_zotero_obsidian.md , obsidian_workflow.md"
