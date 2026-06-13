@@ -48,7 +48,7 @@ publish_templates/
 
 - **단일 원고 파일** `manuscript.md`만 편집(별도 `.qmd` 없음). 렌더가 md를 직접 읽음.
 - **분석이 단일 출처**: 표·그림은 분석에서만 생성 → `04_synced/` 단방향 미러 → 원고에서 직접 수정 금지.
-- **마커 기반 삽입** `[Table N 삽입]`, `[Figure N 삽입]`.
+- **마커 기반 삽입** `{{table:N}}`, `{{figure:N}}`.
 - **명명 규칙**: snake_case + 영문 의미어. 그림 `Figure_<N>_<desc>.png`, 표 `Table_<N>_<desc>.docx`(보충 `_S<N>`), 산출물 `manuscript.docx`(작업본 덮어쓰기, 제출본만 `_archive/submissions/YYYYMMDD_<journal>/`), 참고문헌 `references.bib`+BBT 키, 문헌 `Author(Year) - Short title`. 상세: `skills/setup-manuscript-pipeline/references/naming_conventions.md`.
 - **부산물 격리**: csv·로그는 전부 `_logs/`.
 - 번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물.

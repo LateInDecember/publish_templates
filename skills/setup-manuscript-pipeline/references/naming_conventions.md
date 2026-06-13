@@ -71,8 +71,29 @@
 - `00_raw/`(원자료, 불변), `01_interim/`(중간), `02_final/`(분석용 최종).
 - 파일명 snake_case + 의미어. 버전이 필요하면 `..._v2` 또는 날짜 접미. 원자료는 받은 이름을 보존해도 되나 가능하면 정리.
 
-## 7. 에이전트 준수
+## 7. 렌더링 삽입 마커 (정본)
+
+원고(`manuscript.md`)에서 표·그림이 들어갈 자리는 **언어중립 마커**로 표시한다. 렌더 시 `render_with_insertions.R`가 이 마커를 실제 표(docx)·그림(png)으로 치환한다.
+
+```
+본문 그림:  {{figure:1}}      {{figure:2}}
+본문 표:    {{table:1}}       {{table:4}}
+보충 그림:  {{figure:s1}}     {{figure:s2}}
+보충 표:    {{table:s1}}      {{table:s3}}
+연관 보충표: {{table:s4a}}    {{table:s4b}}   {{table:s4c}}
+```
+
+규칙:
+- 형식은 **`{{table:<id>}}` / `{{figure:<id>}}`** 고정. `<id>`는 본문 `1,2,…`, 보충 `s1,s2,…`, 연관표 `s4a/s4b/…`(모두 소문자).
+- 한 줄에 마커 하나. 마커 외 텍스트를 같은 줄에 두지 않는다.
+- **Obsidian 위키링크 `[[ ]]`와 충돌하지 않는다.** 인용 `[@key]`, 수식 `$...$`와도 구분된다.
+- **경로는 번호로 자동 해석(글롭).** `{{table:1}}`은 `04_synced/tables/{main,supplementary}/Table_1_*.docx`를, `{{figure:2}}`는 `04_synced/figures/`(손제작은 `03_assets/figures/`)의 `Figure_2_*.png`를 찾는다. **번호만 맞으면 설명어는 자유**이며, 파일을 04_synced에 규칙대로 넣고 마커만 쓰면 렌더된다(별도 경로 매핑 유지 불필요).
+- 같은 번호 파일이 둘 이상이면(예: `Figure_S4_*`가 2개) 렌더가 **모호함 에러로 멈춘다.** 그 경우에만 `render_with_insertions.R`의 `asset_override`에 해당 id의 정확한 파일을 지정한다.
+- **그림 캡션**(제목/노트)과 **표 레이아웃 플래그**(가로형 `wide_table_markers`, 페이지나눔 `appendix_pagebreak_markers`)는 파일명에서 못 얻으므로 `render_with_insertions.R`의 id별 설정에서 관리한다.
+- 번호는 §1·§2처럼 `06_reporting`에서 단일 부여한 값을 그대로 마커 `<id>`로 쓴다.
+
+## 8. 에이전트 준수
 
 - 표·그림을 새로 만들면: 번호는 `06_reporting` 매핑표에서 받고, 위 형식으로 저장하고, 매핑표를 갱신한다. 그 뒤 `sync_reporting_assets.R`로 `04_synced/`에 미러.
-- `render_with_insertions.R`의 마커 매핑(`[Table N 삽입]` → 파일)을 새 이름과 일치시킨다.
+- `render_with_insertions.R`의 마커 매핑(`{{table:N}}` → 파일)을 새 이름과 일치시킨다.
 - 규칙을 못 지킬 상황이면 임의로 어기지 말고 사용자에게 확인한다.

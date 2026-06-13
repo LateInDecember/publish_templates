@@ -48,7 +48,7 @@ Journal template note:
 
 ### 과제 및 절차
 
-[Figure 1 삽입]
+{{figure:1}}
 
 ### 분석 자료 수집/처리
 
@@ -62,17 +62,17 @@ Journal template note:
 
 ### 기술통계/인구통계학적 특성
 
-[Table 1 삽입]
+{{table:1}}
 
 ### <가설 1 결과>
 
-[Figure 2 삽입]
+{{figure:2}}
 
-[Table 3 삽입]
+{{table:3}}
 
 ### <가설 2 결과>
 
-[Table 4 삽입]
+{{table:4}}
 
 ## 논의
 
@@ -90,11 +90,11 @@ Journal template note:
 
 ## 부록
 
-[Figure S1 삽입]
-[Figure S2 삽입]
+{{figure:s1}}
+{{figure:s2}}
 
-[Table S1 삽입]
-[Table S2 삽입]
+{{table:s1}}
+{{table:s2}}
 
 <!--
 마커 매핑은 _scripts/render_with_insertions.R 의 table/figure map에서 실제 파일로 연결한다.

@@ -79,7 +79,7 @@ _secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.
 ## 7. Obsidian / 렌더
 
 - `01_manuscript/`를 Obsidian vault로 연다. `manuscript.md`를 편집한다.
-- 인용은 `[@citation_key]` (Better BibTeX 키). 마커 `[Table N 삽입]`, `[Figure N 삽입]`는 렌더 시 치환.
+- 인용은 `[@citation_key]` (Better BibTeX 키). 마커 `{{table:N}}`, `{{figure:N}}`는 렌더 시 치환.
 - HTML은 `_quarto.yml`의 `embed-resources: true`로 단일 파일 출력(출력 폴더 오염 방지).
 
 ## 8. 파일·폴더 명명 규칙 (상세: `references/naming_conventions.md`)

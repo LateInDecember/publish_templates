@@ -123,7 +123,7 @@ if (file.exists(figure1_png)) {
 
 network_manifest_path <- file.path(
   dirname(root),
-  "02_anal", "01_R", "03_results", "06_reporting", "tables", "supplementary",
+  "02_anal", "03_results", "06_reporting", "tables", "supplementary",
   "Figure_S_network_manifest.csv"
 )
 
@@ -156,107 +156,102 @@ figure_block <- function(title, path, note = NULL, width = "100%") {
   )
 }
 
-figure_insertions <- list(
-  list(
-    marker = "[Figure 1 삽입]",
-    replacement = figure_block(
-      "Figure 1. Overview of the fMRI task procedure.",
-      "03_assets/figures/Figure_1_task_procedure.png",
-      "The figure illustrates the instruction/practice session, the round-robin face-viewing task, and the post-rating survey. During scanning, participants viewed village members' faces and ghost face stimuli with jittered fixation intervals. After scanning, they rated each face on familiarity, relationship duration, conversation frequency, and liking. ISI = inter-stimulus interval."
-    )
-  ),
-  list(
-    marker = "[Figure 2 삽입]",
-    replacement = figure_block(
-      "Figure 2. Association between loneliness and caudate response.",
-      "04_synced/figures/Figure_2_H1_H1_M4_roi_caudate_ucla_intimate_w5.png"
-    )
-  ),
-  list(
-    marker = "[Figure S1 삽입]",
-    replacement = figure_block(
-      "Figure S1. Complete social network with analysis participants highlighted.",
-      "04_synced/figures/Figure_S1_complete_network_sample_highlighted.png",
-      figure_note(
-        "Figure S1",
-        "Nodes represent residents and edges represent observed social ties. Communities are color-coded; analysis participants are indicated with red borders."
-      )
-    )
-  ),
-  list(
-    marker = "[Figure S2 삽입]",
-    replacement = figure_block(
-      "Figure S2. Analysis participants and directly connected neighbors.",
-      "04_synced/figures/Figure_S2_sample_neighbor_subgraph.png",
-      figure_note(
-        "Figure S2",
-        "Analysis participants and their directly connected neighbors are shown with pastel node colors; edges indicate direct social ties."
-      )
-    )
-  ),
-  list(
-    marker = "[Figure S3 삽입]",
-    replacement = figure_block(
-      "Figure S3. Network metrics on the analysis-participant subgraph.",
-      "04_synced/figures/Figure_S3_network_metric_panels.png",
-      figure_note(
-        "Figure S3",
-        "Panels show degree centrality, in-degree centrality, out-degree centrality, embeddedness, and brokerage; color intensity indicates metric values."
-      )
-    )
-  ),
-  list(
-    marker = "[Figure S4 삽입]",
-    replacement = figure_block(
-      "Figure S4. Caudate response moderation plots for intimate loneliness.",
-      "04_synced/figures/Figure_S4_H2_caudate_intimate_moderation_panels.png",
-      "Panels show moderation by degree centrality (A), in-degree centrality (B), and embeddedness (C)."
-    )
-  ),
-  list(
-    marker = "[Figure S5 삽입]",
-    replacement = figure_block(
-      "Figure S5. Caudate response moderation plots for total loneliness.",
-      "04_synced/figures/Figure_S5_H2_caudate_total_moderation_panels.png",
-      "Panels show moderation by degree centrality (A), in-degree centrality (B), out-degree centrality (C), and embeddedness (D)."
-    )
-  ),
-  list(
-    marker = "[Figure S6 삽입]",
-    replacement = figure_block(
-      "Figure S6. Putamen response moderation plot for total loneliness.",
-      "04_synced/figures/Figure_S6_H2_putamen_total_moderation_panel.png",
-      "Panel A shows moderation by in-degree centrality."
-    )
+# ============================================================
+# Asset auto-resolution: {{figure:1}} / {{table:1}} -> file by NUMBER.
+#   Path is found by globbing 04_synced (and 03_assets for figures) by id —
+#   only the number/id must match; the descriptive part of the filename is free.
+#   So dropping e.g. Table_1_anything.docx into 04_synced/tables/main and writing
+#   {{table:1}} is enough — no path mapping to maintain.
+#   Captions (figures) and layout flags (tables) are configured by id below.
+#   If two files share the same number (ambiguous), pin the exact file in
+#   `asset_override` (key "figure:<id>" / "table:<id>").
+# ============================================================
+
+id_to_token <- function(id) {
+  if (grepl("^s", id)) paste0("S", substring(id, 2)) else id
+}
+
+asset_override <- list(
+  # Disambiguate same-numbered files (here: demographic vs H2 supplementary figures).
+  "figure:s4" = "04_synced/figures/Figure_S4_H2_caudate_intimate_moderation_panels.png",
+  "figure:s5" = "04_synced/figures/Figure_S5_H2_caudate_total_moderation_panels.png",
+  "figure:s6" = "04_synced/figures/Figure_S6_H2_putamen_total_moderation_panel.png"
+)
+
+resolve_asset <- function(kind, id) {
+  key <- paste0(kind, ":", id)
+  if (!is.null(asset_override[[key]])) return(asset_override[[key]])
+  token <- id_to_token(id)
+  if (kind == "table") {
+    dirs <- c("04_synced/tables/main", "04_synced/tables/supplementary")
+    prefix <- paste0("Table_", token, "_"); ext <- "docx"
+  } else {
+    dirs <- c("04_synced/figures", "03_assets/figures")
+    prefix <- paste0("Figure_", token, "_"); ext <- "png"
+  }
+  pat <- paste0("^", prefix, ".*\\.", ext, "$")
+  hits <- character(0)
+  for (d in dirs) if (dir.exists(d)) hits <- c(hits, list.files(d, pattern = pat, full.names = TRUE))
+  if (length(hits) == 0) {
+    stop(sprintf("No %s file for {{%s:%s}} - expected %s*.%s under %s",
+                 kind, kind, id, prefix, ext, paste(dirs, collapse = " or ")))
+  }
+  if (length(hits) > 1) {
+    stop(sprintf("Ambiguous %s for {{%s:%s}} (%s). Pin it in asset_override.",
+                 kind, kind, id, paste(basename(hits), collapse = ", ")))
+  }
+  hits[1]
+}
+
+# Markers actually used in the manuscript
+.ms_text <- readLines(input_qmd, warn = FALSE)
+.markers <- unique(unlist(regmatches(
+  .ms_text, gregexpr("\\{\\{(?:table|figure):[a-z0-9]+\\}\\}", .ms_text, perl = TRUE))))
+figure_ids <- sub("^\\{\\{figure:([a-z0-9]+)\\}\\}$", "\\1", grep("\\{\\{figure:", .markers, value = TRUE))
+table_ids  <- sub("^\\{\\{table:([a-z0-9]+)\\}\\}$",  "\\1", grep("\\{\\{table:",  .markers, value = TRUE))
+
+# Figure captions (title + optional note), keyed by id. Path is auto-resolved.
+figure_captions <- list(
+  "1"  = list(title = "Figure 1. Overview of the fMRI task procedure.",
+              note  = "The figure illustrates the instruction/practice session, the round-robin face-viewing task, and the post-rating survey. During scanning, participants viewed village members' faces and ghost face stimuli with jittered fixation intervals. After scanning, they rated each face on familiarity, relationship duration, conversation frequency, and liking. ISI = inter-stimulus interval."),
+  "2"  = list(title = "Figure 2. Association between loneliness and caudate response."),
+  "s1" = list(title = "Figure S1. Complete social network with analysis participants highlighted.",
+              note  = figure_note("Figure S1", "Nodes represent residents and edges represent observed social ties. Communities are color-coded; analysis participants are indicated with red borders.")),
+  "s2" = list(title = "Figure S2. Analysis participants and directly connected neighbors.",
+              note  = figure_note("Figure S2", "Analysis participants and their directly connected neighbors are shown with pastel node colors; edges indicate direct social ties.")),
+  "s3" = list(title = "Figure S3. Network metrics on the analysis-participant subgraph.",
+              note  = figure_note("Figure S3", "Panels show degree centrality, in-degree centrality, out-degree centrality, embeddedness, and brokerage; color intensity indicates metric values.")),
+  "s4" = list(title = "Figure S4. Caudate response moderation plots for intimate loneliness.",
+              note  = "Panels show moderation by degree centrality (A), in-degree centrality (B), and embeddedness (C)."),
+  "s5" = list(title = "Figure S5. Caudate response moderation plots for total loneliness.",
+              note  = "Panels show moderation by degree centrality (A), in-degree centrality (B), out-degree centrality (C), and embeddedness (D)."),
+  "s6" = list(title = "Figure S6. Putamen response moderation plot for total loneliness.",
+              note  = "Panel A shows moderation by in-degree centrality.")
+)
+
+figure_insertions <- list()
+for (.id in figure_ids) {
+  .cfg <- figure_captions[[.id]]
+  if (is.null(.cfg)) message("[render] No caption config for {{figure:", .id, "}} - using default title.")
+  .title <- if (!is.null(.cfg$title)) .cfg$title else paste0("Figure ", id_to_token(.id), ".")
+  figure_insertions[[length(figure_insertions) + 1]] <- list(
+    marker = paste0("{{figure:", .id, "}}"),
+    replacement = figure_block(.title, resolve_asset("figure", .id), note = .cfg$note)
   )
-)
+}
 
-table_insertions <- list(
-  "[Table 1 삽입]" = "04_synced/tables/main/Table_1_demographic_characteristics.docx",
-  "[Table 2 삽입]" = "04_synced/tables/main/Table_2_correlations.docx",
-  "[Table 3 삽입]" = "04_synced/tables/main/Table_3_h1_roi_responses.docx",
-  "[Table 4 삽입]" = "04_synced/tables/main/Table_4_h2_moderation.docx",
-  "[Table S1 삽입]" = "04_synced/tables/supplementary/Table_S1_community_center_and_residence.docx",
-  "[Table S2 삽입]" = "04_synced/tables/supplementary/Table_S2_full_pairwise_correlations.docx",
-  "[Table S3 삽입]" = "04_synced/tables/supplementary/Table_S3_h1_models.docx",
-  "[Table S4a 삽입]" = "04_synced/tables/supplementary/Table_S4a_h2_caudate_models.docx",
-  "[Table S4b 삽입]" = "04_synced/tables/supplementary/Table_S4b_h2_nacc_models.docx",
-  "[Table S4c 삽입]" = "04_synced/tables/supplementary/Table_S4c_h2_putamen_models.docx",
-  "[Table S5 삽입]" = "04_synced/tables/supplementary/Table_S5_simple_slopes.docx"
-)
+table_insertions <- list()
+for (.id in table_ids) {
+  table_insertions[[paste0("{{table:", .id, "}}")]] <- resolve_asset("table", .id)
+}
 
+# Layout config (by marker): supplementary items get a page break; some tables are wide.
 appendix_pagebreak_markers <- c(
-  "[Figure S2 삽입]",
-  "[Figure S3 삽입]",
-  "[Figure S4 삽입]",
-  "[Figure S5 삽입]",
-  "[Figure S6 삽입]",
-  "[Table S1 삽입]",
-  "[Table S3 삽입]",
-  "[Table S4a 삽입]",
-  "[Table S4b 삽입]",
-  "[Table S4c 삽입]",
-  "[Table S5 삽입]"
+  "{{figure:s2}}", "{{figure:s3}}", "{{figure:s4}}", "{{figure:s5}}", "{{figure:s6}}",
+  "{{table:s1}}", "{{table:s3}}", "{{table:s4a}}", "{{table:s4b}}", "{{table:s4c}}", "{{table:s5}}"
+)
+wide_table_markers <- c(
+  "{{table:2}}", "{{table:s2}}", "{{table:s3}}", "{{table:s4a}}", "{{table:s4b}}", "{{table:s4c}}", "{{table:s5}}"
 )
 
 qmd <- readLines(input_qmd, warn = FALSE)
@@ -314,20 +309,12 @@ docx_table_to_html <- function(src, marker) {
   if (!is.null(status) && !identical(status, 0L)) {
     stop("Could not convert table to HTML for ", marker, ": ", src)
   }
-  table_class <- if (marker %in% c(
-    "[Table 2 삽입]",
-    "[Table S2 삽입]",
-    "[Table S3 삽입]",
-    "[Table S4a 삽입]",
-    "[Table S4b 삽입]",
-    "[Table S4c 삽입]",
-    "[Table S5 삽입]"
-  )) {
+  table_class <- if (marker %in% wide_table_markers) {
     "inserted-table wide-table"
   } else {
     "inserted-table"
   }
-  table_id <- str_remove_all(marker, "\\[|\\]| 삽입")
+  table_id <- gsub(":", "-", str_remove_all(marker, "[{}]"))
   paste0(
     '<div class="', table_class, '" data-table-id="', table_id, '">',
     paste(html, collapse = "\n"),
