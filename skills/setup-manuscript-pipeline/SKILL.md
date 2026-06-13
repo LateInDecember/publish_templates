@@ -7,7 +7,7 @@ description: Sets up a complete Quarto + Obsidian + Zotero + R manuscript-writin
 
 이 스킬은 학술 논문 원고 작성·렌더링 환경을 **처음부터** 구축한다. 아무 사전 지식이 없는 사용자의 새 컴퓨터에서도 이 스킬만으로 동일한 파이프라인이 재현되어야 한다. 아래 **Phase 0 → 7**을 순서대로 수행한다. 각 Phase가 끝나면 사용자에게 한 줄로 결과를 보고하고 다음으로 넘어간다. **임의로 폴더를 만들거나 순서를 건너뛰지 말 것.**
 
-상세 내용은 `references/`에 있다. 시작 전에 다음을 읽는다: `references/setup_questions.md`, `references/folder_structure.md`, `references/AGENTS_TEMPLATE.md`.
+상세 내용은 `references/`에 있다. 시작 전에 다음을 읽는다: `references/setup_questions.md`, `references/folder_structure.md`, `references/AGENTS_TEMPLATE.md`, `references/naming_conventions.md`(파일·폴더 명명 규칙 — 그림/표/산출물/참고문헌).
 
 ### 자동화 스크립트 (가능하면 활용)
 

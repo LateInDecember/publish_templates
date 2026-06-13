@@ -82,13 +82,17 @@ _secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.
 - 인용은 `[@citation_key]` (Better BibTeX 키). 마커 `[Table N 삽입]`, `[Figure N 삽입]`는 렌더 시 치환.
 - HTML은 `_quarto.yml`의 `embed-resources: true`로 단일 파일 출력(출력 폴더 오염 방지).
 
-## 8. 문헌 파일명 규칙
+## 8. 파일·폴더 명명 규칙 (상세: `references/naming_conventions.md`)
 
-`02_literature/pdfs/`와 대응 노트:
-- 1인: `Author(Year) - Short title.pdf`
-- 2인: `Author1 & Author2(Year) - Short title.pdf`
-- 3인: `Author1, Author2 & Author3(Year) - Short title.pdf`
-- 4인 이상: `Author et al(Year) - Short title.pdf`
+공통: 토큰은 **snake_case**(소문자+`_`), 날짜 `YYYYMMDD`, 설명어는 **영문 의미어**(결과값 아님). 한글·공백·대문자 파일명 금지(참고문헌 예외).
+
+- **그림**: `Figure_<N>_<desc>.png` / 보충 `Figure_S<N>_<desc>.png`. `<desc>`는 영문 의미어 ~3단어. 번호는 `06_reporting`에서 단일 부여(매핑표로 코드 추적). 예) `Figure_2_caudate_loneliness.png`.
+- **표**: `Table_<N>_<desc>.docx` / 보충 `Table_S<N>_<desc>.docx`, 연관 `Table_S4a/S4b`. 예) `Table_1_demographic_characteristics.docx`.
+- **산출물**: 작업본은 `05_output/manuscript.docx`·`.html` 덮어쓰기. **제출본만** `_archive/submissions/YYYYMMDD_<journal-slug>/`에 스냅샷.
+- **참고문헌**: bib는 `01_source/references.bib`(BBT auto-export). 인용키는 **BBT 자동**(`russellUCLALonelinessScale1996`) 그대로. 문헌 PDF/노트는 `Author(Year) - Short title.{pdf,md}` (1/2/3/4+인 규칙은 상세 문서).
+- **로그**: `_logs/`에 `<purpose>_YYYYMMDD.csv` 또는 덮어쓰기. dry-run은 `*.dry_run.csv` 덮어쓰기.
+
+새 표·그림을 만들면: 번호는 `06_reporting` 매핑표에서 받고 → 위 형식으로 저장 → 매핑표·`render_with_insertions.R` 마커 매핑을 일치시킨다.
 
 ## 9. 도구·경로 (이 프로젝트 실제값)
 
