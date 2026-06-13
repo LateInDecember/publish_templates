@@ -12,16 +12,15 @@ bad()  { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=$((fail+1)); }
 warn() { printf "  \033[33m!\033[0m %s\n" "$1"; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
-echo "== 도구 =="
-have quarto && ok "quarto $(quarto --version)" || bad "quarto 미설치 (렌더 필수)"
-# R은 선택: render_with_insertions.R 를 쓸 때만 필요. 없으면 경고만.
+echo "== 도구 (모두 필수) =="
+have quarto && ok "quarto $(quarto --version)" || bad "quarto 미설치 (필수) — install.sh/.ps1 실행"
 if have R; then
   ok "$(R --version | head -1)"
   Rscript -e 'p<-c("officer","png","stringr","xml2","zip"); m<-p[!p %in% rownames(installed.packages())]; if(length(m)) {cat("MISSING:",paste(m,collapse=","),"\n"); quit(status=1)} else cat("ok\n")' >/dev/null 2>&1 \
     && ok "R 렌더 패키지(officer,png,stringr,xml2,zip)" \
-    || warn "R 패키지 일부 누락 — render_with_insertions.R 쓰려면: Rscript -e 'install.packages(c(\"officer\",\"png\",\"stringr\",\"xml2\",\"zip\"))'"
+    || bad "R 패키지 누락 (필수) — Rscript -e 'install.packages(c(\"officer\",\"png\",\"stringr\",\"xml2\",\"zip\"))'"
 else
-  warn "R 없음(선택). render_with_insertions.R는 R 필요 — R 없이는 'quarto render manuscript.md' 사용."
+  bad "R 미설치 (필수, render_with_insertions.R가 R 기반) — install.sh/.ps1 실행"
 fi
 
 echo "== 폴더·파일 =="

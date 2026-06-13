@@ -37,7 +37,7 @@ _secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.
 02_anal/  00_code/ 01_data/(00_raw,01_interim,02_final) 02_meta_data/ 03_results/06_reporting/ 04_docs/
 ```
 
-번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물. `06_reporting`이 분석→원고 단일 핸드오프 지점. **`02_anal`은 도구 중립**(폴더에 R/Python 이름을 쓰지 않음). **R은 선택**: `render_with_insertions.R`만 R이 필요하고, R 없이는 `quarto render manuscript.md`로 렌더한다.
+번호 폴더 = 콘텐츠, 언더스코어 폴더 = 부산물. `06_reporting`이 분석→원고 단일 핸드오프 지점. **`02_anal`은 도구 중립**(폴더에 R/Python 이름을 쓰지 않음). 분석은 R/Python/MATLAB 무엇이든 가능하나 **렌더용 R은 필수**(`render_with_insertions.R`가 R 기반).
 
 ## 2. 출력 위치 규칙 (위반 금지)
 
@@ -57,7 +57,7 @@ _secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.
 
 1. **분석 수정**: `02_anal/00_code/`의 스크립트 수정·실행 → `02_anal/03_results/06_reporting` 갱신.
 2. **동기화**: `01_manuscript/_scripts/sync_reporting_assets.R` → `04_synced/`로 미러(렌더가 자동 호출).
-3. **렌더**: `01_manuscript/`에서 `Rscript _scripts/render_with_insertions.R` (또는 `01_source/render.command`) → `05_output/manuscript.docx`, `.html`. 렌더는 `manuscript.md`를 직접 읽음(별도 `.qmd` 없음). **R을 쓰지 않으면** `quarto render manuscript.md`(표 자동삽입 없음, 표·그림은 마커 위치에 수동 배치).
+3. **렌더**: `01_manuscript/`에서 `Rscript _scripts/render_with_insertions.R` (또는 `01_source/render.command`) → `05_output/manuscript.docx`, `.html`. 렌더는 `manuscript.md`를 직접 읽음(별도 `.qmd` 없음). 이 렌더는 R 기반이므로 R + 패키지가 설치돼 있어야 한다.
 
 ## 4. 그림·표 = 코드가 유일 출처
 
@@ -95,7 +95,7 @@ _secrets/  zotero.env(키, gitignore) + zotero.env.example + set_zotero_key.sh/.
 - 분석 결과 단일 출처: `02_anal/03_results/06_reporting` (또는 `<실제 경로>`)
 - Zotero 컬렉션: `<컬렉션 경로>` → `01_source/references.bib` 자동 export
 - 로컬 PDF 소스(있으면): `<경로>`
-- 분석 도구: `<R | Python | MATLAB>` (R은 선택)
+- 분석 도구: `<R | Python | MATLAB>` (분석은 자유, 단 렌더용 R은 필수)
 
 ## 10. 시크릿 (API 키) — 안전 규칙
 

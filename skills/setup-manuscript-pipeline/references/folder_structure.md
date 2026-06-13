@@ -57,7 +57,7 @@
     └── 04_docs/
 ```
 
-> **도구 중립**: `02_anal`은 도구 이름을 폴더에 쓰지 않는다(이전의 `01_R` 같은 강제 없음). 코드는 `00_code/`에 둔다. **R은 선택**이며, 분석을 Python/MATLAB로 해도 된다. 단, `render_with_insertions.R`(마커·표 삽입 렌더)만 R이 필요하다 — R을 안 쓰면 `quarto render manuscript.md`로 렌더한다.
+> **도구 중립**: `02_anal`은 도구 이름을 폴더에 쓰지 않는다(이전의 `01_R` 같은 강제 없음). 코드는 `00_code/`에 둔다. 분석 자체는 R/Python/MATLAB 무엇이든 가능하다. 다만 **R은 필수**다 — 원고 렌더 `render_with_insertions.R`가 R 기반이므로 R + 패키지(`officer,png,stringr,xml2,zip`)를 반드시 설치한다.
 
 ## 생성 명령 (예시, bash/zsh)
 

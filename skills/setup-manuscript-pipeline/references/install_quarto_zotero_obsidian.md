@@ -52,9 +52,9 @@
 
 ---
 
-## 4. R + 렌더 패키지 (선택 — `render_with_insertions.R`를 쓸 때만)
+## 4. R + 렌더 패키지 (필수)
 
-> **R은 선택**이다. 분석을 Python/MATLAB로 해도 되고, `02_anal` 폴더는 도구 중립(`01_R` 같은 강제 없음)이다. 다만 마커·표 자동삽입 렌더(`render_with_insertions.R`)는 R이 필요하다. R을 안 쓰면 `quarto render manuscript.md`로 렌더한다(표는 마커 위치에 수동 배치). 자동 설치는 `install.sh --with-r` / `install.ps1 -WithR`.
+> **R은 필수**다. 원고 렌더 `render_with_insertions.R`가 R 기반이기 때문이다. 분석 자체는 Python/MATLAB로 해도 되고 `02_anal` 폴더는 도구 중립(`01_R` 같은 강제 없음)이지만, 렌더용 R + 패키지는 반드시 설치한다. 자동 설치는 `install.sh` / `install.ps1`(또는 bootstrap 기본 실행).
 
 1. **R** 설치: <https://cloud.r-project.org/> (또는 macOS `brew install --cask r`, Windows `winget install RProject.R`).
 2. 렌더 스크립트 의존 패키지:

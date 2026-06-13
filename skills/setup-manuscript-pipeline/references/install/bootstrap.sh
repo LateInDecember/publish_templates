@@ -3,13 +3,15 @@
 # bootstrap.sh — 설치 → 폴더·양식 생성 → 시크릿 → 검증을 한 번에 (macOS/Linux)
 #
 # 사용법:
-#   bash bootstrap.sh <프로젝트_절대경로> [--install] [--with-r]
+#   bash bootstrap.sh <프로젝트_절대경로> [--no-install]
 #     <프로젝트_절대경로> : 01_manuscript / 02_anal / AGENTS.md 가 생길 프로젝트 루트
-#     --install           : 먼저 install.sh 로 Quarto/Obsidian/Zotero 설치
-#     --with-r            : (install 시) R + 렌더 패키지도 설치 (R은 선택)
+#     (기본)              : Quarto·R·Obsidian·Zotero 를 install.sh 로 **자동 설치**
+#     --no-install        : 설치를 건너뛰고 폴더·양식만 생성
 #
-# 분석 도구는 중립입니다(R/Python/MATLAB 무엇이든). 02_anal 폴더는 도구 이름을 쓰지 않습니다.
-# render_with_insertions.R(마커·표 삽입)만 R이 필요하며, R 없이는 `quarto render manuscript.md`를 씁니다.
+# 이 스크립트는 기본적으로 도구를 **직접 설치**합니다(단순 안내 아님). Quarto·R은 필수입니다.
+# 단, Cowork 샌드박스 같은 격리 셸에서는 사용자 컴퓨터에 설치할 수 없습니다 —
+# 사용자 맥의 터미널, 또는 로컬 셸을 가진 에이전트(Codex CLI/Claude Code)에서 실행해야 실제로 설치됩니다.
+# 분석 도구 폴더 02_anal 은 도구 중립 이름을 씁니다(R/Python/MATLAB 무엇이든).
 # ============================================================
 set -euo pipefail
 
@@ -18,27 +20,28 @@ REF="$(dirname "$SELF_DIR")"                                # .../references
 FMT="$REF/manuscript_format"
 SCR="$REF/scripts"
 
-PROJECT=""; DO_INSTALL=0; WITH_R=0
+PROJECT=""; DO_INSTALL=1
 for a in "$@"; do
   case "$a" in
-    --install) DO_INSTALL=1 ;;
-    --with-r)  WITH_R=1 ;;
+    --no-install) DO_INSTALL=0 ;;
+    --install)    DO_INSTALL=1 ;;   # 기본값이지만 호환 위해 허용
     -*) echo "알 수 없는 옵션: $a" ;;
     *) [ -z "$PROJECT" ] && PROJECT="$a" ;;
   esac
 done
 if [ -z "$PROJECT" ]; then
-  echo "사용법: bash bootstrap.sh <프로젝트_절대경로> [--install] [--with-r]"; exit 1
+  echo "사용법: bash bootstrap.sh <프로젝트_절대경로> [--no-install]"; exit 1
 fi
 
 ok(){ printf "  \033[32m✓\033[0m %s\n" "$1"; }
 say(){ printf "\n\033[1m%s\033[0m\n" "$1"; }
 
-# ---- 0) 선택: 도구 설치 ----
+# ---- 0) 도구 설치 (기본 실행; --no-install 로만 생략) ----
 if [ "$DO_INSTALL" -eq 1 ]; then
-  say "[0] 도구 설치 (install.sh)"
-  if [ "$WITH_R" -eq 1 ]; then bash "$SELF_DIR/install.sh" --with-r || true
-  else bash "$SELF_DIR/install.sh" || true; fi
+  say "[0] 도구 설치 (install.sh) — Quarto·R·Obsidian·Zotero (필수)"
+  bash "$SELF_DIR/install.sh" || echo "  ! 일부 설치 실패 — 위 메시지 확인. 격리 셸이면 사용자 맥에서 install.sh를 실행하세요."
+else
+  say "[0] 설치 건너뜀 (--no-install) — Quarto·R 없으면 렌더가 안 됩니다."
 fi
 
 MS="$PROJECT/01_manuscript"
@@ -110,9 +113,9 @@ cat <<EOF
   2) Zotero API 키 저장:  bash "$PROJECT/_secrets/set_zotero_key.sh"
   3) Obsidian: $MS 를 vault로 열고 Shell commands/Citations/Dataview 설치
   4) AGENTS.md 의 <...>(분석 경로·Zotero 컬렉션 등) 채우기
-  5) (R 분석이면) sync_reporting_assets.R 의 reporting_root 를 02_anal/03_results/06_reporting 또는 실제 경로로 확인
+  5) sync_reporting_assets.R 의 reporting_root 를 02_anal/03_results/06_reporting 또는 실제 분석 결과 경로로 확인
   6) render_with_insertions.R 의 표/그림 마커 매핑을 이 논문 실제 표/그림으로 수정
-  7) 렌더: cd "$MS" && Rscript _scripts/render_with_insertions.R   (R 없으면: quarto render manuscript.md)
+  7) 렌더: cd "$MS" && Rscript _scripts/render_with_insertions.R
 EOF
 echo ""
 echo "부트스트랩 완료."
