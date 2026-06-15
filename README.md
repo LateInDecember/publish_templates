@@ -2,7 +2,8 @@
 
 Quarto + Obsidian + Zotero + R 기반으로 **학술 논문 원고를 작성·렌더링하는 작업 환경을 처음부터 세팅**하고, **문헌 PDF를 구조화된 리뷰 노트로 작성**하는 **에이전트 중립적 템플릿 저장소**입니다. 다른 컴퓨터·다른 사람도 동일한 파이프라인을 복제할 수 있습니다.
 
-> 📖 **처음 쓰신다면 [`USER_GUIDE.md`](USER_GUIDE.md) 를 보세요.** 설치·원고 작성·표/그림·Zotero 연동·API 키·문헌 노트 정리·에이전트 프롬프트·터미널 명령까지 전부 단계별로 설명합니다. 이 README는 짧은 개요입니다.
+> 🟢 **아무것도 몰라도 시작하려면 → [`START_HERE.md`](START_HERE.md).** macOS는 `SETUP_MAC.command`, Windows는 `SETUP_WINDOWS.bat` 를 **더블클릭**하면 도구 설치부터 폴더 생성까지 자동입니다.
+> 📖 자세한 사용법은 [`USER_GUIDE.md`](USER_GUIDE.md) (설치·원고·표/그림·Zotero·API 키·문헌 노트·에이전트 프롬프트·터미널 명령·문제해결). 이 README는 짧은 개요입니다.
 
 ## 어떤 에이전트로 쓰나 (도구 중립)
 

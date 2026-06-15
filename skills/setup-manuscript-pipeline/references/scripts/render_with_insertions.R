@@ -289,7 +289,7 @@ on.exit(unlink(render_qmd), add = TRUE)
 
 render_quarto <- function(to, output) {
   cmd <- c("render", basename(render_qmd), "--to", to, "-o", output)
-  status <- system2("quarto", cmd, env = "HOME=/private/tmp")
+  status <- system2("quarto", cmd, env = if (Sys.info()[["sysname"]] == "Darwin") "HOME=/private/tmp" else character())
   if (!identical(status, 0L)) {
     stop("quarto render failed for ", to, "; see messages above.")
   }

@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # ============================================================
-# set_zotero_key.sh — Zotero API 키를 안전하게 저장 (같은 폴더의 zotero.env)
-#   - zotero.env 는 .gitignore 처리 + 권한 600 (소유자만 읽기/쓰기)
-#   - 키를 화면/로그에 출력하지 않음 (붙여넣기는 가려짐)
+# set_zotero_key.sh — Zotero API 키를 _secrets/zotero.env 에 저장 (gitignore, 권한 600)
 #
-# 사용법:
-#   bash set_zotero_key.sh                      # 대화형: 키를 붙여넣기
-#   bash set_zotero_key.sh <API_KEY> <USER_ID>  # 인자로 바로
+# ★ 가장 확실한 방법: 키를 명령 인자로 바로 전달(붙여넣기). 대화형 입력이 안 되는
+#   터미널에서도 항상 동작합니다.
+#     bash set_zotero_key.sh <API_KEY> <USER_ID>
+#   예) bash set_zotero_key.sh P9xAbC123... 1234567
+#
+# 인자를 생략하면 대화형으로 물어봅니다(입력이 화면에 보입니다 — 일부러 안 가립니다,
+# 가리면 일부 터미널에서 입력 자체가 안 되는 문제가 있어서).
 # ============================================================
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,24 +18,20 @@ KEY="${1:-}"
 ZID="${2:-}"
 
 if [ -z "$KEY" ]; then
-  printf "Zotero API key 붙여넣기 (화면에 안 보임): "
-  read -r -s KEY; echo
+  printf "Zotero API key 를 붙여넣고 Enter: "
+  IFS= read -r KEY
 fi
 if [ -z "$ZID" ]; then
-  printf "Zotero userID (숫자, https://www.zotero.org/settings/keys 에 표시): "
-  read -r ZID
+  printf "Zotero userID(숫자, https://www.zotero.org/settings/keys 에 표시) 를 입력하고 Enter: "
+  IFS= read -r ZID
 fi
 
 if [ -z "$KEY" ] || [ -z "$ZID" ]; then
-  echo "키와 userID가 모두 필요합니다." >&2; exit 1
+  echo "키와 userID가 모두 필요합니다. 예: bash set_zotero_key.sh <API_KEY> <USER_ID>" >&2
+  exit 1
 fi
 
 umask 077
-cat > "$ENV_FILE" <<EOF
-ZOTERO_API_KEY=$KEY
-ZOTERO_USER_ID=$ZID
-ZOTERO_LIBRARY_TYPE=user
-EOF
-chmod 600 "$ENV_FILE"
-echo "저장 완료: $ENV_FILE  (권한 600, git 추적 안 됨)"
-echo "확인: 키 길이 ${#KEY}자 / userID $ZID  (키 값 자체는 출력하지 않음)"
+printf 'ZOTERO_API_KEY=%s\nZOTERO_USER_ID=%s\nZOTERO_LIBRARY_TYPE=user\n' "$KEY" "$ZID" > "$ENV_FILE"
+chmod 600 "$ENV_FILE" 2>/dev/null || true
+echo "저장 완료: $ENV_FILE  (git 추적 안 됨). 키 길이 ${#KEY}자, userID $ZID."

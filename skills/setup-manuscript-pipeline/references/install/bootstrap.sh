@@ -30,7 +30,11 @@ for a in "$@"; do
   esac
 done
 if [ -z "$PROJECT" ]; then
-  echo "사용법: bash bootstrap.sh <프로젝트_절대경로> [--no-install]"; exit 1
+  # 인자가 없으면 물어본다(더블클릭 런처용).
+  printf "프로젝트 이름 (기본: my_manuscript): "; IFS= read -r _name; _name="${_name:-my_manuscript}"
+  printf "어디에 만들까요 (기본: %s): " "$HOME/Documents"; IFS= read -r _base; _base="${_base:-$HOME/Documents}"
+  PROJECT="$_base/$_name"
+  echo "→ 프로젝트 경로: $PROJECT"
 fi
 
 ok(){ printf "  \033[32m✓\033[0m %s\n" "$1"; }
@@ -58,16 +62,20 @@ say "[2] 원고 양식 배치"
 [ -f "$MS/manuscript.md" ] || cp "$FMT/manuscript_skeleton.md" "$MS/manuscript.md"
 cp "$FMT/_quarto.yml" "$MS/_quarto.yml"
 cp -R "$FMT/styles/." "$MS/01_source/styles/"
+cp "$FMT/apa.csl" "$MS/01_source/apa.csl"
+# 빈 references.bib (Zotero 연동 전에도 렌더가 깨지지 않도록). 이후 Better BibTeX auto-export가 덮어씀.
+[ -f "$MS/01_source/references.bib" ] || printf '%% references.bib — Zotero Better BibTeX auto-export target (currently empty).\n%% See install/zotero_bbt_setup.md to connect Zotero.\n' > "$MS/01_source/references.bib"
 cp "$FMT/journal_format_kjcbp_2020.md" "$FMT/journal_requirements.md" "$MS/01_source/notes/" 2>/dev/null || true
 [ -f "$FMT/gitignore.template" ] && cp "$FMT/gitignore.template" "$MS/.gitignore"
-ok "manuscript.md, _quarto.yml, styles, notes"
+ok "manuscript.md, _quarto.yml, apa.csl, references.bib(빈), styles, notes"
 
 # ---- 3) 스크립트 ----
 say "[3] 렌더·동기화 스크립트 배치"
 cp "$SCR"/*.R "$MS/_scripts/" 2>/dev/null || true
-cp "$SCR/render.command" "$MS/01_source/render.command"
-chmod +x "$MS/01_source/render.command"
-ok "_scripts/*.R, 01_source/render.command (+x)"
+cp "$SCR/render.command" "$MS/01_source/render.command" 2>/dev/null || true
+cp "$SCR/render.bat" "$MS/01_source/render.bat" 2>/dev/null || true
+chmod +x "$MS/01_source/render.command" 2>/dev/null || true
+ok "_scripts/*.R, 01_source/render.command(mac)+render.bat(win)"
 
 # ---- 4) Obsidian 스타터 ----
 say "[4] Obsidian 스타터 설정"

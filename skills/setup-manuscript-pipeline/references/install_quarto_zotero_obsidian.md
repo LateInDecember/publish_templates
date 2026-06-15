@@ -70,7 +70,13 @@
 
 ## 5. Zotero API 키 (_secrets) — 선택
 
-웹 API로 메타데이터·첨부를 가져오는 스크립트용. `bash _secrets/set_zotero_key.sh`로 키를 복붙해 `_secrets/zotero.env`(gitignore, 권한600)에 저장. 자세히는 `install/zotero_bbt_setup.md` §5.5, `install/secrets/README.md`.
+웹 API로 메타데이터·첨부를 가져오는 스크립트용. **키를 인자로 전달**해 저장하는 게 가장 확실:
+- macOS/Linux: `bash _secrets/set_zotero_key.sh "API_KEY" "userID"`
+- Windows: `powershell -ExecutionPolicy Bypass -File _secrets\set_zotero_key.ps1 -ApiKey "API_KEY" -UserId "userID"`
+
+`_secrets/zotero.env`(gitignore, 권한600)에 저장됩니다. 자세히는 `install/zotero_bbt_setup.md` §5.5, `install/secrets/README.md`.
+
+> **citation key가 공란이면** Better BibTeX 미설치입니다. `install/zotero_bbt_setup.md` §1대로 BBT를 설치(우클릭으로 `.xpi` 저장 → Tools→Plugins에서 설치 → 재시작)하세요.
 
 ## 검증 체크리스트
 

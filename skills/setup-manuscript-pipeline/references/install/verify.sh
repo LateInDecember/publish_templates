@@ -29,11 +29,16 @@ echo "== 폴더·파일 =="
 [ -f "$MS/_scripts/render_with_insertions.R" ] && ok "render_with_insertions.R 있음" || bad "render 스크립트 없음"
 [ -x "$MS/01_source/render.command" ] && ok "render.command 실행권한 있음" || bad "render.command 없음/실행권한 없음 (chmod +x)"
 grep -q "embed-resources: true" "$MS/_quarto.yml" 2>/dev/null && ok "_quarto.yml embed-resources:true" || bad "_quarto.yml embed-resources 확인 필요"
+[ -f "$MS/01_source/apa.csl" ] && ok "01_source/apa.csl 있음" || bad "apa.csl 없음 (렌더 필수) — bootstrap 재실행 또는 manuscript_format/apa.csl 복사"
+[ -f "$MS/01_source/styles/reference-nanum-myeongjo.docx" ] && ok "reference docx 있음" || bad "reference-nanum-myeongjo.docx 없음 (DOCX 렌더 필수)"
 
 echo "== Zotero 연동 (references.bib) =="
 BIB="$MS/01_source/references.bib"
 if [ -f "$BIB" ]; then
   n=$(grep -c '^@' "$BIB" 2>/dev/null || echo 0)
+  if [ "$n" -eq 0 ]; then
+    warn "references.bib가 비어 있음(0항목) — Zotero 연결 전이면 정상. 연결: install/zotero_bbt_setup.md"
+  fi
   if [ "$n" -gt 0 ]; then
     ok "references.bib 존재 — 항목 ${n}개"
     # 최근 수정 여부(자동 export 동작 추정)
@@ -42,11 +47,9 @@ if [ -f "$BIB" ]; then
     else
       printf "  \033[33m!\033[0m references.bib가 최근에 갱신되지 않음 — Zotero를 열고 BBT auto-export(Keep updated)를 확인하세요.\n"
     fi
-  else
-    bad "references.bib에 @entry가 없음 — Zotero 컬렉션 export 확인"
   fi
 else
-  bad "references.bib 없음 — Zotero Better BibTeX auto-export를 $BIB 로 지정하세요"
+  bad "references.bib 없음 — bootstrap이 빈 파일을 만들거나 Zotero auto-export를 $BIB 로 지정하세요"
 fi
 
 echo "== 시크릿 (_secrets) =="
